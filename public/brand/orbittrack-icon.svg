@@ -1,0 +1,43 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="top" x1="112" y1="96" x2="400" y2="260" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A5B4FC"/>
+      <stop offset="1" stop-color="#818CF8"/>
+    </linearGradient>
+    <linearGradient id="left" x1="112" y1="178" x2="256" y2="424" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F46E5"/>
+      <stop offset="1" stop-color="#4338CA"/>
+    </linearGradient>
+    <linearGradient id="right" x1="400" y1="178" x2="256" y2="424" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3730A3"/>
+      <stop offset="1" stop-color="#312E81"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="46" y1="260" x2="466" y2="260" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34D399"/>
+      <stop offset="1" stop-color="#10B981"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Órbita traseira -->
+  <g transform="rotate(-24 256 260)" opacity="0.35">
+    <ellipse cx="256" cy="260" rx="210" ry="84" stroke="#10B981" stroke-width="14" fill="none"/>
+  </g>
+
+  <!-- Cubo isométrico (extrusão 3D) -->
+  <path d="M256 96L400 178L256 260L112 178L256 96Z" fill="url(#top)"/>
+  <path d="M112 178L256 260V424L112 342V178Z" fill="url(#left)"/>
+  <path d="M400 178L256 260V424L400 342V178Z" fill="url(#right)"/>
+
+  <!-- Arestas internas -->
+  <path d="M256 260V424" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="3"/>
+  <path d="M112 178L256 260L400 178" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="3"/>
+
+  <!-- Órbita frontal -->
+  <g transform="rotate(-24 256 260)">
+    <path d="M46 260A210 84 0 0 0 466 260" stroke="url(#ring)" stroke-width="16" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Satélite -->
+  <circle cx="64" cy="314" r="16" fill="#34D399"/>
+  <circle cx="64" cy="314" r="26" fill="#34D399" fill-opacity="0.18"/>
+</svg>
