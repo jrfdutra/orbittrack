@@ -5,6 +5,7 @@ import LayoutPainel from '@/components/painel/LayoutPainel'
 import Login from '@/pages/Login'
 import Registar from '@/pages/Registar'
 import RecuperarSenha from '@/pages/RecuperarSenha'
+import RedefinirSenha from '@/pages/RedefinirSenha'
 
 // Páginas temporárias do painel e público que vamos expandir nas fases seguintes
 import Dashboard from '@/pages/painel/Dashboard'
@@ -25,6 +26,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/registar" element={<Registar />} />
           <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+          <Route path="/redefinir-senha" element={<RedefinirSenha />} />
+          <Route path="/painel/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/acompanhar/:token" element={<AcompanharEncomenda />} />
           <Route path="/peca/:tokenPeca" element={<PecaPassaporte />} />
           <Route path="/verificar/:codigo" element={<VerificarCertificado />} />
