@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Save, Plus, Trash2, ArrowLeft, Cube, FileText } from 'lucide-react';
+import { Save, Plus, Trash2, ArrowLeft, Package, FileText } from 'lucide-react';
 
 const EncomendaForm = () => {
   const { id } = useParams();
