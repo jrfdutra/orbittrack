@@ -26,7 +26,7 @@ interface EncomendaPublica {
 
 const AcompanharEncomenda = () => {
   const { token } = useParams<{ token: string }>();
-  const [encomenda, setEncomenda] = useState<EncomendaPublica | null>(null);
+  const [encomenda, setEncomenda] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -36,25 +36,11 @@ const AcompanharEncomenda = () => {
 
   async function fetchDadosPublicos() {
     try {
-      // Nota: Na prática, isto deve ser uma view ou RPC para evitar expor IDs internos
       const { data, error } = await supabase
-        .from('encomendas')
-        .select(`
-          *,
-          empresa:empresas(*),
-          itens:itens_encomenda(*),
-          historico:historico_estados(*)
-        `)
-        .eq('token_publico', token)
-        .single();
+        .rpc('obter_encomenda_publica', { p_token: token });
 
-      if (error || !data) throw new Error('Encomenda não encontrada');
+      if (error || !data || !data.encomenda) throw new Error('Encomenda não encontrada');
       
-      // Ordenar histórico
-      data.historico = (data.historico || []).sort((a: any, b: any) => 
-        new Date(b.criada_em).getTime() - new Date(a.criada_em).getTime()
-      );
-
       setEncomenda(data);
     } catch (err: any) {
       setErro(err.message);
@@ -98,7 +84,7 @@ const AcompanharEncomenda = () => {
           </div>
           <div className="text-white pb-1">
             <h1 className="text-xl font-bold leading-tight">{encomenda.empresa.nome}</h1>
-            <p className="text-sm opacity-90">Encomenda #{encomenda.numero_encomenda}</p>
+            <p className="text-sm opacity-90">Encomenda #{encomenda.encomenda.numero_encomenda}</p>
           </div>
         </div>
       </div>
@@ -109,10 +95,10 @@ const AcompanharEncomenda = () => {
           <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wider mb-2" style={{ color: corPrimaria, backgroundColor: `${corPrimaria}15` }}>
             Estado Atual
           </span>
-          <h2 className="text-3xl font-black text-gray-900 mb-2 uppercase">{encomenda.estado}</h2>
+          <h2 className="text-3xl font-black text-gray-900 mb-2 uppercase">{encomenda.encomenda.estado}</h2>
           <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
             <Clock size={16} />
-            <span>Previsão: {new Date(encomenda.previsao_entrega).toLocaleDateString('pt-PT')}</span>
+            <span>Previsão: {encomenda.encomenda.previsao_entrega ? new Date(encomenda.encomenda.previsao_entrega).toLocaleDateString('pt-PT') : 'A definir'}</span>
           </div>
         </div>
 
@@ -122,7 +108,7 @@ const AcompanharEncomenda = () => {
             <Clock size={20} className="text-gray-400" /> Histórico
           </h3>
           <div className="space-y-8 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
-            {encomenda.historico.map((h, i) => (
+            {encomenda.historico.map((h: any, i: number) => (
               <div key={h.id} className="relative pl-8">
                 <div className={`absolute left-0 top-1.5 w-6 h-6 rounded-full border-4 border-white shadow-sm flex items-center justify-center ${i === 0 ? 'bg-indigo-600' : 'bg-gray-300'}`} style={{ backgroundColor: i === 0 ? corPrimaria : undefined }}>
                    {i === 0 && <div className="w-2 h-2 bg-white rounded-full"></div>}
@@ -145,7 +131,7 @@ const AcompanharEncomenda = () => {
              </h3>
           </div>
           <div className="divide-y">
-            {encomenda.itens.map((item) => (
+            {encomenda.itens.map((item: any) => (
               <div key={item.id} className="p-6 flex justify-between items-start">
                 <div>
                   <h4 className="font-bold text-gray-800">{item.nome_peca}</h4>
