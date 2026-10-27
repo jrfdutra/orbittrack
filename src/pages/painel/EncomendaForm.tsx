@@ -59,12 +59,20 @@ const EncomendaForm = () => {
     setLoading(true);
 
     try {
+      // 0. Gerar número da encomenda via função RPC
+      const { data: numData, error: numError } = await supabase
+        .rpc('gerar_numero_encomenda', { p_empresa_id: empresaId });
+
+      if (numError) throw numError;
+      const numeroEncomenda = numData || `${new Date().getFullYear()}-0001`;
+
       // 1. Criar encomenda
       const { data: enc, error: encError } = await supabase
         .from('encomendas')
         .insert([{ 
           ...comprador, 
           empresa_id: empresaId,
+          numero_encomenda: numeroEncomenda,
           estado: 'Recebida'
         }])
         .select()
