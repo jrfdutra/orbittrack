@@ -107,9 +107,12 @@ const PecaPassaporte = () => {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col md:flex-row">
+      <div className="flex-1 flex flex-col md:flex-row relative">
         {/* Viewer 3D com Suporte a Câmara Real (AR) */}
-        <div className="flex-1 relative bg-gray-900 flex flex-col min-h-[450px] overflow-hidden">
+        <div className={cameraActive 
+          ? "fixed inset-0 w-full h-full z-50 bg-black flex flex-col" 
+          : "flex-1 relative bg-gray-900 flex flex-col min-h-[450px] overflow-hidden"
+        }>
           
           {/* Vídeo da Câmara em Segundo Plano para AR */}
           <video
