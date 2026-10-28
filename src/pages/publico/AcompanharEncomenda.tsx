@@ -1,28 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Package, Calendar, MapPin, CheckCircle2, Clock, Truck, Award, FileText, ExternalLink } from 'lucide-react';
-
-interface EncomendaPublica {
-  id: string;
-  numero_encomenda: string;
-  nome_comprador: string;
-  estado: string;
-  previsao_entrega: string;
-  notas_publicas: string;
-  empresa: {
-    nome: string;
-    logotipo_url: string;
-    foto_capa_url: string;
-    cor_primaria: string;
-    cor_secundaria: string;
-    telefone: string;
-    instagram: string;
-    texto_rodape: string;
-  };
-  itens: any[];
-  historico: any[];
-}
+import { Package, Clock, Truck, Award, ExternalLink, Box } from 'lucide-react';
 
 const AcompanharEncomenda = () => {
   const { token } = useParams<{ token: string }>();
@@ -89,7 +68,7 @@ const AcompanharEncomenda = () => {
         </div>
       </div>
 
-      <div className="px-4 -mt-4 space-y-4 relative z-10">
+      <div className="px-4 -mt-4 space-y-4 relative z-10 max-w-2xl mx-auto">
         {/* Card Estado Principal */}
         <div className="bg-white rounded-2xl shadow-sm border p-6 text-center">
           <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wider mb-2" style={{ color: corPrimaria, backgroundColor: `${corPrimaria}15` }}>
@@ -100,12 +79,17 @@ const AcompanharEncomenda = () => {
             <Clock size={16} />
             <span>Previsão: {encomenda.encomenda.previsao_entrega ? new Date(encomenda.encomenda.previsao_entrega).toLocaleDateString('pt-PT') : 'A definir'}</span>
           </div>
+          {encomenda.encomenda.notas_publicas && (
+            <p className="mt-4 text-sm text-gray-600 bg-gray-50 p-3 rounded-xl border">
+              "{encomenda.encomenda.notas_publicas}"
+            </p>
+          )}
         </div>
 
         {/* Linha do Tempo */}
         <div className="bg-white rounded-2xl shadow-sm border p-6">
           <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Clock size={20} className="text-gray-400" /> Histórico
+            <Clock size={20} className="text-gray-400" /> Histórico de Fabrico
           </h3>
           <div className="space-y-8 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
             {encomenda.historico.map((h: any, i: number) => (
@@ -123,32 +107,60 @@ const AcompanharEncomenda = () => {
           </div>
         </div>
 
-        {/* Itens */}
+        {/* Itens e Certificados */}
         <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
           <div className="p-6 border-b">
              <h3 className="font-bold text-gray-900 flex items-center gap-2">
-               <Package size={20} className="text-gray-400" /> Peças na Encomenda
+               <Package size={20} className="text-gray-400" /> Peças na Encomenda & Certificados
              </h3>
           </div>
           <div className="divide-y">
-            {encomenda.itens.map((item: any) => (
-              <div key={item.id} className="p-6 flex justify-between items-start">
-                <div>
-                  <h4 className="font-bold text-gray-800">{item.nome_peca}</h4>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-xs text-gray-500">
-                    <span>Material: <b className="text-gray-700">{item.material}</b></span>
-                    <span>Cor: <b className="text-gray-700">{item.cor}</b></span>
-                    <span>Resolução: <b className="text-gray-700">{item.altura_camada}mm</b></span>
-                    <span>Preenchimento: <b className="text-gray-700">{item.enchimento_percentagem}%</b></span>
+            {encomenda.itens.map((item: any) => {
+              const certificado = (encomenda.certificados || []).find((c: any) => c.item_id === item.id);
+              return (
+                <div key={item.id} className="p-6 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-bold text-gray-800 text-base">{item.nome_peca}</h4>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-xs text-gray-500">
+                        <span>Qtd: <b className="text-gray-700">{item.quantidade}x</b></span>
+                        <span>Material: <b className="text-gray-700">{item.material || 'PLA'}</b></span>
+                        <span>Cor: <b className="text-gray-700">{item.cor || '—'}</b></span>
+                        <span>Resolução: <b className="text-gray-700">{item.altura_camada}mm</b></span>
+                      </div>
+                    </div>
+                    {item.token_peca && (
+                      <Link
+                        to={`/peca/${item.token_peca}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs rounded-lg transition-colors border border-indigo-200"
+                      >
+                        <Box size={14} /> Ver 3D & VR
+                      </Link>
+                    )}
                   </div>
+
+                  {certificado && (
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-900">
+                      <div className="flex items-center gap-2">
+                        <Award size={16} className="text-amber-600 shrink-0" />
+                        <div>
+                          <p className="font-bold">Certificado de Autenticidade ({certificado.nivel_selo.toUpperCase()})</p>
+                          <p className="font-mono text-amber-800">Código: {certificado.codigo_verificacao}</p>
+                        </div>
+                      </div>
+                      <a 
+                        href={`/verificar/${certificado.codigo_verificacao}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-colors inline-flex items-center gap-1"
+                      >
+                        Verificar <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  )}
                 </div>
-                {item.ficheiro_3d_url && (
-                  <button className="p-2 bg-gray-50 rounded-lg text-indigo-600 border border-indigo-100">
-                    <ExternalLink size={18} />
-                  </button>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -156,10 +168,10 @@ const AcompanharEncomenda = () => {
         <div className="text-center py-6 space-y-4">
            <div className="flex justify-center gap-4">
              {encomenda.empresa.telefone && (
-               <a href={`tel:${encomenda.empresa.telefone}`} className="p-3 bg-white rounded-full shadow-sm border text-gray-600"><Truck size={20} /></a>
+               <a href={`tel:${encomenda.empresa.telefone}`} className="p-3 bg-white rounded-full shadow-sm border text-gray-600 hover:bg-gray-50"><Truck size={20} /></a>
              )}
              {encomenda.empresa.instagram && (
-               <a href={`https://instagram.com/${encomenda.empresa.instagram}`} target="_blank" className="p-3 bg-white rounded-full shadow-sm border text-gray-600"><Award size={20} /></a>
+               <a href={`https://instagram.com/${encomenda.empresa.instagram}`} target="_blank" rel="noreferrer" className="p-3 bg-white rounded-full shadow-sm border text-gray-600 hover:bg-gray-50"><Award size={20} /></a>
              )}
            </div>
            <p className="text-xs text-gray-400 max-w-xs mx-auto">
