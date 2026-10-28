@@ -11,12 +11,14 @@ import {
   Menu,
   X,
   ChevronDown,
+  Layers,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
   { to: '/painel', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/painel/encomendas', label: 'Encomendas', icon: Package, end: false },
+  { to: '/painel/produtos', label: 'Produtos & Consumo', icon: Layers, end: false },
   { to: '/painel/empresa', label: 'A Minha Empresa', icon: Building2, end: false },
   { to: '/painel/estados', label: 'Estados', icon: Settings, end: false },
 ]

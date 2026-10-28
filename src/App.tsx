@@ -13,6 +13,7 @@ import EncomendasLista from '@/pages/painel/EncomendasLista'
 import EncomendaForm from '@/pages/painel/EncomendaForm'
 import EmpresaPerfil from '@/pages/painel/EmpresaPerfil'
 import EstadosConfig from '@/pages/painel/EstadosConfig'
+import ProdutosConsumo from '@/pages/painel/ProdutosConsumo'
 import AcompanharEncomenda from '@/pages/publico/AcompanharEncomenda'
 import PecaPassaporte from '@/pages/publico/PecaPassaporte'
 import VerificarCertificado from '@/pages/publico/VerificarCertificado'
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="encomendas/:id/editar" element={<EncomendaForm />} />
             <Route path="empresa" element={<EmpresaPerfil />} />
             <Route path="estados" element={<EstadosConfig />} />
+            <Route path="produtos" element={<ProdutosConsumo />} />
           </Route>
 
           {/* Redirecionamentos */}

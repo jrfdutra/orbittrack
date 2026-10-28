@@ -157,7 +157,8 @@ const EncomendasLista = () => {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
-        <table className="w-full text-left border-collapse">
+        {/* Tabela em Desktop */}
+        <table className="hidden md:table w-full text-left border-collapse">
           <thead className="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-semibold">
             <tr>
               <th className="p-4">Nº Encomenda</th>
@@ -238,6 +239,85 @@ const EncomendasLista = () => {
             )}
           </tbody>
         </table>
+
+        {/* Lista Responsiva em Cards (Mobile) */}
+        <div className="md:hidden divide-y divide-gray-100">
+          {encomendas.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              Ainda não existem encomendas registadas. Clique em "Nova Encomenda" para começar.
+            </div>
+          ) : (
+            encomendas.map((enc) => (
+              <div key={enc.id} className="p-4 space-y-3 bg-white">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-indigo-600 text-base">{enc.numero_encomenda}</span>
+                  <span className="text-xs text-gray-400">
+                    {enc.previsao_entrega ? new Date(enc.previsao_entrega).toLocaleDateString('pt-PT') : 'Sem data'}
+                  </span>
+                </div>
+
+                <div>
+                  <div className="font-semibold text-gray-900 text-sm">{enc.nome_comprador}</div>
+                  {enc.telefone_comprador && (
+                    <div className="text-xs text-gray-500">{enc.telefone_comprador}</div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-xs font-medium text-gray-500">Estado:</span>
+                  <select
+                    value={enc.estado}
+                    onChange={(e) => atualizarEstado(enc.id, e.target.value)}
+                    className="border border-gray-200 bg-gray-50 rounded-lg px-2.5 py-1 text-xs font-semibold text-gray-800 focus:outline-none"
+                  >
+                    {ESTADOS_POSSIVEIS.map(st => (
+                      <option key={st} value={st}>{st}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Ações Móveis Touch-Friendly */}
+                <div className="pt-2 border-t border-gray-100 flex items-center justify-between gap-1 flex-wrap">
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => navigate(`/painel/encomendas/${enc.id}/editar`)}
+                      className="p-2 text-gray-600 bg-gray-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-xs flex items-center gap-1 font-medium"
+                    >
+                      <Edit2 size={15} /> Editar
+                    </button>
+                    <button 
+                      onClick={() => emitirCertificado(enc.id)}
+                      className="p-2 text-amber-700 bg-amber-50 rounded-lg text-xs flex items-center gap-1 font-medium"
+                    >
+                      <Award size={15} /> Selo
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => copiarLink(enc.token_publico)}
+                      className="px-2.5 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 rounded-lg flex items-center gap-1"
+                    >
+                      <ExternalLink size={13} /> Link
+                    </button>
+                    <button 
+                      onClick={() => enviarWhatsApp(enc)}
+                      className="px-2.5 py-1.5 text-xs font-semibold text-green-700 bg-green-50 rounded-lg flex items-center gap-1"
+                    >
+                      <MessageSquare size={13} /> Wpp
+                    </button>
+                    <button 
+                      onClick={() => eliminarEncomenda(enc.id)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
